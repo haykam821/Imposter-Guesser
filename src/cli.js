@@ -1,8 +1,11 @@
 const guesser = require(".");
 
 const caporal = require("caporal");
-const { debug } = require("./utils/debug.js");
 
+const { version } = require("../package.json");
+caporal.version(version);
+
+const { debug } = require("./utils/debug.js");
 const debugOption = ["--debug [debug]", "The debuggers to enable.", caporal.STRING, "imposter-guesser:*"];
 
 const start = caporal.command("start", "Starts the guesser.");
