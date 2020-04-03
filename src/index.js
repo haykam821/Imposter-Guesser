@@ -26,7 +26,7 @@ async function start(args) {
 
 	while (true) {
 		try {
-			completeGame(redditGot, sneknetGot, streak, args);
+			await completeGame(redditGot, sneknetGot, streak, args);
 			await delay(args.delay);
 		} catch (error) {
 			log("found uncaught error while completing game:", error);
