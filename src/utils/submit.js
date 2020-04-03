@@ -1,4 +1,4 @@
-const { version } = require("../package.json");
+const { version } = require("../../package.json");
 
 async function submit(options, sneknetGot) {
 	const submission = await sneknetGot.post("y20/submit", {

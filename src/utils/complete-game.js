@@ -7,6 +7,20 @@ const guess = require("./guess.js");
 const logGuess = require("./log-guess.js");
 const submit = require("./submit.js");
 
+function submitGuessResults(result, noteChoices, chosenNote, sneknetGot) {
+	if (result === "LOSE") {
+		return submit([{
+			correct: false,
+			message: chosenNote.text.trim()
+		}], sneknetGot);
+	}
+
+	return submit(noteChoices.notes.map(note => ({
+		message: note.text.trim(),
+		correct: chosenNote.id === note.id,
+	})), sneknetGot)
+}
+
 async function completeGame(redditGot, sneknetGot, streak, args) {
 	// Choose a note
 	const noteChoices = await getNoteChoices(redditGot, sneknetGot, args.guessLogs);
@@ -28,17 +42,9 @@ async function completeGame(redditGot, sneknetGot, streak, args) {
 		const easyOrStatus = noteChoices.notes.length === 1 ? "easy" : result.result;
 		logGuess(easyOrStatus, chosenNote.text.trim(), chosenNote.id, args.guessLogs, streak);
 
-		if (result.result === "LOSE") {
-			submit([{
-				correct: false,
-				message: chosenNote.text.trim()
-			}], sneknetGot);
-		} else {
-			submit(noteChoices.notes.map(note => ({
-				message: note.text.trim(),
-				correct: chosenNote.id === note.id,
-			})), sneknetGot);
-		}
+		submitGuessResults(result.result, noteChoices, chosenNote, sneknetGot).catch(error => {
+			log("failed to submit guess results:", error);
+		})
 	}).catch(error => {
 		log("error in guess submission:", error);
 		logGuess("error", chosenNote.text.trim(), chosenNote.id, args.guessLogs);
